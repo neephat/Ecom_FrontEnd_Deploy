@@ -6,157 +6,159 @@ import { showError, showLoading } from "../../utils/messages";
 import { login } from "../../api/apiAuth";
 import { authenticate, isAuthenticated, userInfo } from "../../utils/auth";
 import "./login.css";
+import { toast } from "react-toastify";
 
 const Login = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const socialToken = urlParams.get("token");
+  const urlParams = new URLSearchParams(window.location.search);
+  const socialToken = urlParams.get("token");
 
-    const navigate = useNavigate();
-    const [values, setValues] = useState({
-        email: "",
-        password: "",
-        error: false,
-        loading: false,
-        disabled: false,
-        redirect: false,
-    });
-    const { email, password, loading, error, redirect, disabled } = values;
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    email: "",
+    password: "",
+    error: false,
+    loading: false,
+    disabled: false,
+    redirect: false,
+  });
+  const { email, password, loading, error, redirect, disabled } = values;
 
-    useEffect(() => {
-        if (socialToken && !redirect) {
-            authenticate(socialToken, () => {
-                setValues({
-                    ...values,
-                    success: true,
-                    disabled: false,
-                    loading: false,
-                    redirect: true,
-                });
-            });
-        }
-    });
-
-    const handleChange = (e) => {
+  useEffect(() => {
+    if (socialToken && !redirect) {
+      authenticate(socialToken, () => {
         setValues({
-            ...values,
-            error: false,
-            [e.target.name]: e.target.value,
+          ...values,
+          success: true,
+          disabled: false,
+          loading: false,
+          redirect: true,
         });
-    };
+      });
+    }
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // alert(JSON.stringify(values));
-        setValues({
+  const handleChange = (e) => {
+    setValues({
+      ...values,
+      error: false,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // alert(JSON.stringify(values));
+    setValues({
+      ...values,
+      error: false,
+      loading: true,
+      disabled: true,
+    });
+    login({ email, password })
+      .then((res) => {
+        authenticate(res.data.token, () => {
+          setValues({
             ...values,
-            error: false,
-            loading: true,
-            disabled: true,
+            email: "",
+            password: "",
+            success: true,
+            disabled: false,
+            loading: false,
+            redirect: true,
+          });
         });
-        login({ email, password })
-            .then((res) => {
-                authenticate(res.data.token, () => {
-                    setValues({
-                        ...values,
-                        email: "",
-                        password: "",
-                        success: true,
-                        disabled: false,
-                        loading: false,
-                        redirect: true,
-                    });
-                });
-            })
-            .catch((err) => {
-                let errMsg = "Something went wrong!";
-                if (err.response) {
-                    errMsg = err.response.data;
-                } else {
-                    errMsg = "Something went wrong!";
-                }
-                setValues({
-                    ...values,
-                    error: errMsg,
-                    disabled: false,
-                    loading: false,
-                });
-            });
-    };
-
-    const signInForm = () => {
-        const form = (
-            <form onSubmit={handleSubmit} className="flex flex-col items-center px-6 py-8 mx-auto  lg:py-0 mb-6">
-                
-                <div className="my-3 p-8 w-full border rounded-lg shadow-xl sm:max-w-md">
-                <Typography variant="h4" sx={{ marginBottom: 2, textAlign: 'center' }}>
-                SignUp
-                </Typography>
-                <label >Email</label>
-                <input
-                    name="email"
-                    type="email"
-                    className="block w-96 p-2 border my-1"
-                    value={email}
-                    onChange={handleChange}
-                    placeholder="Enter your email here"
-                    required
-                />
-
-                <label className="">Password</label>
-                <input
-                    name="password"
-                    type="password"
-                    className="block w-96 p-2 border my-1"
-                    value={password}
-                    onChange={handleChange}
-                    placeholder="Enter your password here"
-                    required
-                />
-
-                <button
-                    type="submit"
-                    className="block p-2 my-2 bg-blue-800 text-white border border-2 rounded-md w-full cursor-pointer p-2 mt-8"
-                    disabled={disabled}
-                >
-                    Login
-                </button>
-            </div>
-            </form>
-        );
-        return form;
-    };
-
-    //* How can I redirect the user to the home page after successful login?
-    const showMsg = () => {
-        if (redirect) {
-            // navigate("/");
-            navigate(`/${userInfo().role}/dashboard`);
+      })
+      .catch((err) => {
+        if (err.response) {
+          toast.error(err.response.data);
+        } else {
+          toast.error("Something went wrong!");
         }
-        //* The purpose of this function is that if the user is logged in he can not go to the login page again.
-        // if (isAuthenticated()) {
-        //     return <Navigate to="/" replace />;
-        // }
-    };
+        setValues({
+          ...values,
+          error: "",
+          disabled: false,
+          loading: false,
+        });
+      });
+  };
 
-    const google = () => {
-        window.open("http://localhost:3001/auth/google", "_self");
-    };
+  const signInForm = () => {
+    const form = (
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center px-6 mx-auto"
+      >
+        <div className="my-3 p-8 py-6 w-full border rounded-lg bg-white shadow-xl sm:max-w-md">
+          <h1 className="text-center font-semibold m-2 text-3xl">Sign In</h1>
+          <div className="my-6">
+            <label className="font-semibold">Email</label>
+            <input
+              name="email"
+              type="email"
+              className="block w-full p-2 border my-1 rounded-md"
+              value={email}
+              onChange={handleChange}
+              placeholder="Enter your email here"
+              required
+            />
+          </div>
+          <div className="my-6">
+            <label className="font-semibold">Password</label>
+            <input
+              name="password"
+              type="password"
+              className="block w-full p-2 border my-1 rounded-md"
+              value={password}
+              onChange={handleChange}
+              placeholder="Enter your password here"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="block p-2 my-2 btn btn-success text-white border border-2 rounded-md w-full cursor-pointer p-2 mt-8"
+            disabled={disabled}
+          >
+            Sign In
+          </button>
+        </div>
+      </form>
+    );
+    return form;
+  };
 
-    const facebook = () => {
-        window.open("http://localhost:3001/auth/facebook", "_self");
-    };
-    const github = () => {
-        window.open("http://localhost:3001/auth/github", "_self");
-    };
+  //* How can I redirect the user to the home page after successful login?
+  const showMsg = () => {
+    if (redirect) {
+      // navigate("/");
+      navigate(`/${userInfo().role}/dashboard`);
+    }
+    //* The purpose of this function is that if the user is logged in he can not go to the login page again.
+    // if (isAuthenticated()) {
+    //     return <Navigate to="/" replace />;
+    // }
+  };
 
-    return (
-        <Layout title="Login">
-            {showMsg()}
-            {showLoading(loading)}
-            {showError(error, error)}
-            
-            {signInForm()}
-            {/* <div className="flex space-x-2 justify-center items-center w-full">
+  const google = () => {
+    window.open("http://localhost:3001/auth/google", "_self");
+  };
+
+  const facebook = () => {
+    window.open("http://localhost:3001/auth/facebook", "_self");
+  };
+  const github = () => {
+    window.open("http://localhost:3001/auth/github", "_self");
+  };
+
+  return (
+    <Layout title="Login">
+      {showMsg()}
+      {showLoading(loading)}
+      {showError(error, error)}
+
+      {signInForm()}
+      {/* <div className="flex space-x-2 justify-center items-center w-full">
                 <div
                     onClick={google}
                     className="my-1 border border-gray-400 rounded-md  cursor-pointer w-1/6 flex items-center justify-center p-2"
@@ -185,8 +187,8 @@ const Login = () => {
                 </div>
                 
             </div> */}
-        </Layout>
-    );
+    </Layout>
+  );
 };
 
 export default Login;

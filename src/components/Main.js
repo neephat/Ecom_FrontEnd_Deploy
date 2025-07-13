@@ -21,96 +21,105 @@ import ShippingAddress from "./order/ShippingAddress";
 import Checkout from "./order/Checkout";
 //---------------------------------------------
 import Payment from "./order/Payment";
+import CartCopy from "./order/Cart_copy";
 
 const Main = () => {
-    return (
-        <div className="w-4/5 m-auto">
-            {/* <Container> */}
-            <Routes>
-                <Route path="/" exact Component={Home} />
-                <Route path="/login" exact Component={Login} />
-                <Route path="/register" exact Component={Register} />
-                <Route path="/product/:id" exact Component={ProductDetails} />
-                <Route
-                    path="/cart"
-                    element={
-                        <PrivateRoute>
-                            <Cart />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/user/dashboard"
-                    element={
-                        <PrivateRoute>
-                            <DashBoard />
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/shipping/:discount"
-                    element={
-                        <PrivateRoute>
-                            <ShippingAddress />
-                        </PrivateRoute>
-                    }
-                />
+  return (
+    <div data-theme="light" className="w-full m-auto bg-gray-100">
+      {/* <Container> */}
+      <Routes>
+        <Route path="/" exact Component={Home} />
+        <Route path="/login" exact Component={Login} />
+        <Route path="/register" exact Component={Register} />
+        <Route path="/product/:id" exact Component={ProductDetails} />
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/cart-copy"
+          element={
+            <PrivateRoute>
+              <CartCopy />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user/dashboard"
+          element={
+            <PrivateRoute>
+              <DashBoard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/shipping/:discount"
+          element={
+            <PrivateRoute>
+              <ShippingAddress />
+            </PrivateRoute>
+          }
+        />
 
-                <Route
-                    path="/payment/:discount"
-                    element={
-                        <PrivateRoute>
-                            <Payment />
-                        </PrivateRoute>
-                    }
-                />
+        <Route
+          path="/payment/:discount"
+          element={
+            <PrivateRoute>
+              <Payment />
+            </PrivateRoute>
+          }
+        />
 
-                <Route
-                    path="/checkout/:discount"
-                    element={
-                        <PrivateRoute>
-                            <Checkout />
-                        </PrivateRoute>
-                    }
-                />
+        <Route
+          path="/checkout/:discount"
+          element={
+            <PrivateRoute>
+              <Checkout />
+            </PrivateRoute>
+          }
+        />
 
-                <Route
-                    path="/admin/dashboard"
-                    element={
-                        <AdminRoute>
-                            <AdminDashboard />
-                        </AdminRoute>
-                    }
-                />
-                <Route
-                    path="/create/category"
-                    element={
-                        <AdminRoute>
-                            <CreateCategory />
-                        </AdminRoute>
-                    }
-                />
-                <Route
-                    path="/create/product"
-                    element={
-                        <AdminRoute>
-                            <CreateProduct />
-                        </AdminRoute>
-                    }
-                />
-                <Route
-                    path="/create/coupon"
-                    element={
-                        <AdminRoute>
-                            <CreateCoupon />
-                        </AdminRoute>
-                    }
-                />
-            </Routes>
-            {/* <Navigate to="/"/> */}
-            {/* </Container> */}
-        </div>
-    );
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/create/category"
+          element={
+            <AdminRoute>
+              <CreateCategory />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/create/product"
+          element={
+            <AdminRoute>
+              <CreateProduct />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/create/coupon"
+          element={
+            <AdminRoute>
+              <CreateCoupon />
+            </AdminRoute>
+          }
+        />
+      </Routes>
+      {/* <Navigate to="/"/> */}
+      {/* </Container> */}
+    </div>
+  );
 };
 
 export default Main;
